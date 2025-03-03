@@ -6,6 +6,8 @@
 
 ## Features
 - Automated image downloading from the **Leonardo.Ai API**.
+- Stores generation metadata in a DataFrame for tracking.
+- Creates **checkpoint backups** of the DataFrame at key moments.
 - Error handling for failed downloads.
 - Logging system for tracking download activity.
 - Minimal dependencies for lightweight execution.
@@ -50,7 +52,7 @@ pip install -r requirements.txt
 Modify the script settings to customize:
 - **API Key** (required to authenticate with Leonardo.Ai API).
 - **File storage location**.
-- **Retry attempts**.
+- **DataFrame rebuilding behavior**.
 - **Logging preferences**.
 
 ## Optional Parameters
@@ -60,7 +62,7 @@ The script supports the following optional command-line arguments:
 |---------------|-------------|
 | `--api_key`   | Manually specify the Leonardo.Ai API key (if not using an environment variable). |
 | `--download_dir` | Define the directory where downloaded files will be stored. |
-| `--rebuild`   | Force a rebuild of the download directory. |
+| `--rebuild`   | Forces a rebuild of the generation DataFrame. The current `<username>_generations.pk` file will be backed up as `<username>_generations.pk.bak`, and a new DataFrame will be created by scanning all available generations from the API. **If interrupted during this phase, some generations may be missing.** However, once the download phase starts, interruptions are safe as progress is tracked. |
 | `--verbose`   | Enable verbose logging for debugging. |
 
 ## Environment Variables
@@ -92,7 +94,21 @@ Or specify optional parameters:
 ./download_bot.py --api_key your-api-key --download_dir /path/to/save --verbose
 ```
 
-Ensure necessary permissions are granted if downloading from restricted sources.
+### **Handling Corrupted or Inaccurate DataFrames**
+If the DataFrame storing generation information becomes corrupted or inaccurate, users have two options:
+1. **Use `--rebuild`**: This will create a new DataFrame from all available generations in the API and back up the old one as `<username>_generations.pk.bak`. **If interrupted during this phase, some generations may be missing.**
+2. **Manually restore a backup**: The script periodically creates **checkpoint backups** in the format:
+   ```
+   <username>_generations_YYYYMMDD-HHMMSS.pk
+   ```
+   Users can restore a backup by **copying** (not moving) the checkpoint file to `<username>_generations.pk`:
+   ```bash
+   cp <username>_generations_YYYYMMDD-HHMMSS.pk <username>_generations.pk
+   ```
+   This ensures that the original backup remains available if needed.
+
+### **Interrupted Downloads**
+If the script is interrupted **after** the dataframe has been built and downloading has started, it will **resume** from where it left off. The script tracks which files have already been downloaded, ensuring that no duplicates are fetched.
 
 ## Repository
 GitHub: [LeoDownloadBot](https://github.com/pookah-bot/leodownloadbot)
