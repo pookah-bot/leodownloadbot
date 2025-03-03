@@ -53,11 +53,43 @@ Modify the script settings to customize:
 - **Retry attempts**.
 - **Logging preferences**.
 
+## Optional Parameters
+The script supports the following optional command-line arguments:
+
+| Argument       | Description |
+|---------------|-------------|
+| `--api_key`   | Manually specify the Leonardo.Ai API key (if not using an environment variable). |
+| `--download_dir` | Define the directory where downloaded files will be stored. |
+| `--rebuild`   | Force a rebuild of the download directory. |
+| `--verbose`   | Enable verbose logging for debugging. |
+
+## Environment Variables
+Instead of passing arguments every time, users can set environment variables for convenience:
+
+| Environment Variable       | Description |
+|----------------------------|-------------|
+| `LEONARDO_API_KEY`        | Your Leonardo.Ai API key for authentication. |
+| `LEONARDO_DOWNLOAD_DIR`   | The directory where downloaded images will be stored. |
+
+To set an environment variable in your shell session:
+
+```bash
+export LEONARDO_API_KEY="your-api-key"
+export LEONARDO_DOWNLOAD_DIR="/path/to/downloads"
+```
+
+Or permanently add them to your `.bashrc`, `.zshrc`, or `.profile`.
+
 ## Usage
 
 Run the bot using:
 ```bash
 ./download_bot.py
+```
+
+Or specify optional parameters:
+```bash
+./download_bot.py --api_key your-api-key --download_dir /path/to/save --verbose
 ```
 
 Ensure necessary permissions are granted if downloading from restricted sources.
