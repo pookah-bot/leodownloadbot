@@ -20,6 +20,17 @@
 # from, out of, or in connection with the software or the use of the software.
 # -----------------------------------------------------------------------------
 
+import warnings
+# Suppress FutureWarning from pandas when concatenating DataFrames with all-NA (empty) columns.
+# This occurs because we set missing columns to None for later population, which produces all-NA columns.
+# Although the behavior is handled correctly, future versions of pandas will change how dtypes
+# are determined in this scenario.
+warnings.filterwarnings(
+    "ignore",
+    message="The behavior of DataFrame concatenation with empty or all-NA entries is deprecated.*",
+    category=FutureWarning
+)
+
 import os
 import time
 import argparse
